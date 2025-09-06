@@ -1,5 +1,3 @@
-import Link from "next/link";
-import Image from "next/image";
 import localFont from "next/font/local";
 import Navbar from "@/components/Navbar";
 import { InteractiveHoverButton } from "@/components/interactive-hover-button";
@@ -30,7 +28,7 @@ export default function Home() {
           
           <div className="flex-1  rounded-l-2xl p-4 ml-6">
             <h1 className={`text-6xl mt-16 ${satoshi.className} font-[500]`}>The Future of Mental Wellness is Here.</h1>
-            <p className={`text-xl mt-6 ${satoshi.className}`}>Meet knead. , your personal AI companion for mental and emotional support. Compassionate, confidential, and available 24/7. We're preparing for launch.</p>
+            <p className={`text-xl mt-6 ${satoshi.className}`}>Meet knead., your personal AI companion for mental and emotional support. Compassionate, confidential, and available 24/7. We&apos;re preparing for launch.</p>
              
             <InteractiveHoverButton className="mt-6" />
             <h1 className={`text-xl mt-6 ${satoshi.className} `}>Whole-Person Health for a Balanced Life </h1>
