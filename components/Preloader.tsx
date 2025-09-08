@@ -17,7 +17,7 @@ const satoshi = localFont({
   ],
   variable: "--font-satoshi",
 });
-const words: string[] = ["Pause", "Breathe", "Calm", "Focus", "Ease", "Soothe", "Rest", "KNEAD"];
+const words: string[] = ["Pause", "Breathe", "Calm", "Focus", "Ease", "Soothe", "Rest", "riha."];
 
 const opacity: Variants = {
     initial: { opacity: 0 },

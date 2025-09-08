@@ -19,7 +19,7 @@ export default function Footer() {
                 <footer className={` text-black py-10 mt-32 ${satoshi.className}`}>
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
             {/* Logo or Brand */}
-            <div className="text-2xl font-bold">knead.</div>
+            <div className="text-2xl font-bold">riha.</div>
 
             {/* Navigation Links */}
             <div className="flex gap-6 text-lg">

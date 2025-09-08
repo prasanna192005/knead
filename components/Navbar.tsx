@@ -24,7 +24,7 @@ export default function Navbar() {
     >
      
       <div className="flex items-center">
-        <h1 className="text-2xl text-yellow-900 font-bold">knead.</h1>
+        <h1 className="text-2xl text-yellow-900 font-bold">riha.</h1>
       </div>
 
       

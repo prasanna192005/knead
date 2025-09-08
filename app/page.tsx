@@ -69,7 +69,7 @@ export default function Home() {
                     The Future of Mental Wellness is Here.
                   </motion.h1>
                   <motion.p className={`text-lg md:text-xl mt-6 ${satoshi.className}`} variants={fadeUp}>
-                    Meet knead., your personal AI companion for mental and emotional support. Compassionate,
+                    Meet riha., your personal AI companion for mental and emotional support. Compassionate,
                     confidential, and available 24/7. We&apos;re preparing for launch.
                   </motion.p>
                   <motion.div variants={fadeUp}>
