@@ -30,6 +30,7 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
   const [isMuted, setIsMuted] = useState(false); // Start unmuted
   const [musicStarted, setMusicStarted] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
+  const hasInteractedRef = useRef(false); // Track user interaction
 
   const [coords, setCoords] = useState<{ x: number; y: number; r: number }>({
     x: 0,
@@ -89,39 +90,42 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
     if (audioRef.current) {
       audioRef.current.preload = 'auto';
       audioRef.current.load();
+      audioRef.current.muted = isMuted;
+      audioRef.current.volume = 0.5; // Set reasonable volume
     }
   }, []);
 
   // Attempt to play audio
   const playAudio = () => {
     if (audioRef.current && !musicStarted) {
-      audioRef.current
-        .play()
-        .then(() => {
-          setMusicStarted(true);
-          setAudioError(null);
-          audioRef.current!.muted = isMuted; // Apply mute state
-        })
-        .catch((error) => {
-          console.error('Audio play failed:', error);
-          setAudioError('Failed to play audio. Click the mute button to retry.');
-        });
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setMusicStarted(true);
+            setAudioError(null);
+            audioRef.current!.muted = isMuted;
+          })
+          .catch((error) => {
+            console.error('Audio play failed:', error);
+            setAudioError('Click the ceiling light or mute button to play audio.');
+          });
+      }
     }
   };
 
-  // Start audio on mount and handle mute state
+  // Try to play audio on mount
   useEffect(() => {
     playAudio();
-    if (audioRef.current) {
-      audioRef.current.muted = isMuted;
-      audioRef.current.volume = 0.5; // Set a reasonable volume
-    }
-  }, [isMuted, musicStarted]);
+  }, []);
 
-  // Handle light mode toggle
+  // Handle light mode toggle and retry audio on first interaction
   const toggleLight = () => {
     const img = roomImageRef.current;
     if (!img) return;
+
+    // Mark that a user interaction has occurred
+    hasInteractedRef.current = true;
 
     img.style.opacity = '0';
     setTimeout(() => {
@@ -143,6 +147,10 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
       }
       img.style.opacity = '1';
       updateMapCoordinates();
+      // Retry audio playback after user interaction
+      if (!musicStarted) {
+        playAudio();
+      }
     }, 250);
   };
 
@@ -209,6 +217,13 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
     };
   }, [isLightMode]);
 
+  // Update audio mute state
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.muted = isMuted;
+    }
+  }, [isMuted]);
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -242,7 +257,7 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
         });
       } else {
         try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL!}/api/waitlist`, {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/waitlist`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -287,10 +302,18 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
 
   const showHome = () => {
     onShowHome();
+    // Retry audio playback on user interaction
+    if (!musicStarted) {
+      playAudio();
+    }
   };
 
   const toggleMute = () => {
     setIsMuted((prev) => !prev);
+    // Retry audio playback on user interaction
+    if (!musicStarted) {
+      playAudio();
+    }
   };
 
   const getInputProps = () => {
@@ -408,7 +431,7 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
             onSubmit={handleSubmit}
             className="flex flex-col items-center gap-4 w-full"
           >
-            <h2 className="text-xl text-gray-900 w-full text-left ml-8">
+            <h2 className="text-xl text-gray-900 w-full text-left ml-8 font-semibold">
               Join the waitlist
             </h2>
             <div className="relative w-full">

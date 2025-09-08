@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     // 5. Return a success response with the newly created user data.
-    return NextResponse.json({ message: 'Successfully added to waitlist!', user: data }, { status: 201 });
+    return NextResponse.json({ message: ' ', user: data }, { status: 201 });
 
   } catch (e) {
     // Handle cases where the request body is not valid JSON.
