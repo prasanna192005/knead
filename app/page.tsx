@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import localFont from 'next/font/local';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionValue } from 'framer-motion';
 import SmoothScroll from '@/components/SmoothScroll';
 import Preloader from '@/components/Preloader';
 import InteractiveRoom from '@/components/InteractiveRoom';
@@ -11,6 +11,11 @@ import { motion as Motion, Transition, Easing } from 'motion/react';
 import CurvedLoop from '@/components/CurvedLoop';
 import ReferAFriend from '@/components/ReferFriend';
 import Footer from '@/components/Footer';
+import { useScroll } from 'framer-motion';
+import { CrowdCanvas, Skiper39 } from "@/components/ui/skiper-ui/skiper39";
+import { StickyCard_001 } from "@/components/ui/skiper-ui/skiper16";
+import { LetterAnimation } from '@/components/LetterAnimation';
+import Image from 'next/image';
 
 const sfPro = localFont({
   src: [
@@ -141,6 +146,111 @@ const BlurText: React.FC<BlurTextProps> = ({
   );
 };
 
+// Define projects array for DemoSkiper16
+const projects = [
+  {
+    title: "Your Project 1",
+    src: "/Frame 1.png",
+  },
+  {
+    title: "Your Project 2",
+    src: "/Frame 2.png",
+  },
+  { title: "Your Project 3", src: "/Frame 3.png" },
+  { title: "Your Project 4", src: "/Frame 4.png" },
+];
+
+// Optimized CharacterV1 component for Skiper31Demo
+const CharacterV1: React.FC<{
+  char: string;
+  index: number;
+  centerIndex: number;
+  scrollYProgress: MotionValue<number>;
+}> = ({ char, index, centerIndex, scrollYProgress }) => {
+  const y = scrollYProgress.get() * 50 * (index - centerIndex) * 0.5;
+  const opacity = 1 - Math.abs(scrollYProgress.get() * (index - centerIndex) * 0.2);
+
+  return (
+    <motion.span
+      style={{
+        display: 'inline-block',
+        transform: `translateY(${y}px)`,
+        opacity,
+        willChange: 'transform, opacity',
+      }}
+      transition={{ ease: 'easeOut', duration: 0.3 }}
+    >
+      {char}
+    </motion.span>
+  );
+};
+
+// Optimized Skiper31Demo component with "RIHA"
+const Skiper31Demo = () => {
+  const targetRef = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start center", "end center"],
+  });
+  const centerIndex = 2;
+
+  return (
+    <div
+      ref={targetRef}
+      className="relative box-border flex h-[100vh] items-center justify-center gap-4 overflow-hidden"
+    >
+      <div
+        className="font-sf-pro w-full max-w-4xl text-center text-4xl sm:text-6xl font-bold uppercase tracking-tighter text-black"
+        style={{
+          perspective: "500px",
+        }}
+      >
+        {["R", "I", "H", "A"].map((char, index) => (
+          <CharacterV1
+            key={index}
+            char={char}
+            index={index}
+            centerIndex={centerIndex}
+            scrollYProgress={scrollYProgress}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const DemoSkiper16 = () => {
+  const container = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start start", "end end"],
+  });
+
+  return (
+    <main
+      ref={container}
+      className="relative flex w-full flex-col items-center justify-center py-20"
+    >
+      {projects.map((project, i) => {
+        const targetScale = Math.max(
+          0.5,
+          1 - (projects.length - i - 1) * 0.1,
+        );
+        return (
+          <StickyCard_001
+            key={`p_${i}`}
+            i={i}
+            {...project}
+            progress={scrollYProgress}
+            range={[i * 0.25, 1]}
+            targetScale={targetScale}
+          />
+        );
+      })}
+    </main>
+  );
+};
+
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [showHomeContent, setShowHomeContent] = useState(false);
@@ -159,8 +269,8 @@ export default function Home() {
   };
 
   return (
-    <main className={`${sfPro.variable} font-sf-pro`}>
-      <div className="relative z-10">
+    <main className={`${sfPro.variable} font-sf-pro min-h-screen flex flex-col`}>
+      <div className="relative z-10 flex-grow">
         <SmoothScroll />
         <AnimatePresence mode="wait">
           {isLoading && <Preloader />}
@@ -169,102 +279,38 @@ export default function Home() {
         {!isLoading && (
           <div data-scroll-container>
             {!showHomeContent ? (
-              <InteractiveRoom onShowHome={() => setShowHomeContent(true)} />
+              <InteractiveRoom
+                onShowHome={() => {
+                  console.log('InteractiveRoom triggered onShowHome');
+                  setShowHomeContent(true);
+                }}
+              />
             ) : (
-              <div id="home-content" className="relative min-h-screen flex flex-col items-center justify-center bg-black">
-                <h1 className="text-center font-bold text-4xl mt-8 mb-4 text-white">riha</h1>
-                <BlurText
-                  text="Riha is your safe space to talk, reflect, and feel understood."
-                  delay={150}
-                  animateBy="words"
-                  direction="top"
-                  onAnimationComplete={handleAnimationComplete}
-                  className="text-3xl mb-8 text-white font-semibold mt-8 italic text-center"
-                />
-                <BlurText
-                  text="Anytime you need it"
-                  delay={150}
-                  animateBy="words"
-                  direction="top"
-                  onAnimationComplete={handleAnimationComplete}
-                  className="text-3xl mb-8 text-white font-semibold"
-                />
-                <div className="flex justify-center items-center gap-6 max-w-[1280px] w-full px-4 sm:gap-4 mt-[-120px]">
-                  <GradientCard
-                    title="Your Person, Your Way"
-                    description="We craft a companion that fits you — someone who talks and listens exactly the way you’re most comfortable with."
-                    icon={
-                      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M8 8C9.65685 8 11 6.65685 11 5C11 3.34315 9.65685 2 8 2C6.34315 2 5 3.34315 5 5C5 6.65685 6.34315 8 8 8ZM8 9C5.33 9 3 10.34 3 12V14H13V12C13 10.34 10.67 9 8 9Z"
-                          fill="white"
-                        />
-                      </svg>
-                    }
-                    linkText="Learn More"
-                    linkHref="#companion"
-                    colorScheme="red"
-                  />
-                  <GradientCard
-                    title="Vent Mode"
-                    description="Sometimes you just need to let it all out. In vent mode, we’re simply here to listen and give you a space where you feel truly heard."
-                    icon={
-                      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M2 4C2 2.89543 2.89543 2 4 2H12C13.1046 2 14 2.89543 14 4V10C14 11.1046 13.1046 12 12 12H8L4 14V12H4C2.89543 12 2 11.1046 2 10V4Z"
-                          fill="white"
-                        />
-                      </svg>
-                    }
-                    linkText="Explore Now"
-                    linkHref="#vent"
-                    colorScheme="blue"
-                  />
-                  <GradientCard
-                    title="Journal"
-                    description="Your own safe place to write down thoughts, feelings, or whatever’s on your mind. No pressure, just you putting it into words."
-                    icon={
-                      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M3 2H13C14.1046 2 15 2.89543 15 4V12C15 13.1046 14.1046 14 13 14H3C1.89543 14 1 13.1046 1 12V4C1 2.89543 1.89543 2 3 2ZM5 4V12H11V4H5Z"
-                          fill="white"
-                        />
-                      </svg>
-                    }
-                    linkText="Start Writing"
-                    linkHref="#journal"
-                    colorScheme="green"
-                  />
-                  <GradientCard
-                    title="Session Reports"
-                    description="After your chats, you’ll get small summaries — what you shared, what mattered, and a few gentle steps you can try moving forward."
-                    icon={
-                      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                          d="M3 2H13C14.1046 2 15 2.89543 15 4V12C15 13.1046 14.1046 14 13 14H3C1.89543 14 1 13.1046 1 12V4C1 2.89543 1.89543 2 3 2ZM4 6H12V7H4V6ZM4 9H12V10H4V9Z"
-                          fill="white"
-                        />
-                      </svg>
-                    }
-                    linkText="View Reports"
-                    linkHref="#reports"
-                    colorScheme="yellow"
-                  />
+              <div id="home-content" className="relative min-h-screen flex flex-col items-center justify-between overflow-visible">
+                {/* Main Content */}
+                <Image src="/riha..png" alt="Riha Logo" width={150} height={150} className="mt-90" />
+                <div className='mt-2'>
+                <LetterAnimation />
                 </div>
-                <div>
-                  <h1 className='text-white text-3xl text-center'>Refer a Friend?</h1>
+                <div className="flex flex-col items-center justify-center w-full mt-[-600px]">
+                  <DemoSkiper16 />
                 </div>
-                <div className='relative w-full'>
+                
+                {/* CurvedLoop Section */}
+                <div className="w-full min-h-[200px] relative z-200">
                   <CurvedLoop
                     marqueeText="✦ Safe Space ✦ Non-judgmental ✦ 24/7 Support ✦"
-                    speed={1}
+                    speed={2}
                     curveAmount={500}
                     direction="right"
                     interactive={true}
-                    className="text-white z-99 absolute"
+                    className="text-orange fill-current font-bold"
                   />
-                  <div className='w-full mt-[-200]'><Footer/></div>
                 </div>
+
+                <footer className="w-full mt-[-350px] bg-[#f5f4f3] h-screen relative ">
+                  <CrowdCanvas src="/all-peeps.png" rows={15} cols={7} />
+                </footer>
               </div>
             )}
           </div>
