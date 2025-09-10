@@ -1,5 +1,6 @@
 'use client';
 
+import React from "react";
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRightIcon,
@@ -9,15 +10,21 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import LightRays from '../components/LightRays';
+import { TextHoverEffect } from "@/components/ui/text-hover-effect";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import { ibmPlexMono } from "@/lib/fonts";
+
 
 interface InteractiveRoomProps {
   onShowHome: () => void;
 }
+const words = `Riha is your safe space to talk, reflect, and feel understood. Anytime you need it. Click on the light to turn it on and start your journey towards emotional well-being. Your path to healing begins here.`;
 
 const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
   const nightImageUrl = '/dark.png';
   const dayImageUrl = '/light.png';
-  const audioUrl = '/bg.mp3'; // Ensure this file exists in /public
+  const audioUrl = '/bg.mp3'; // En
+  // sure this file exists in /public
 
   const [isLightMode, setIsLightMode] = useState(false);
   const roomImageRef = useRef<HTMLImageElement | null>(null);
@@ -360,6 +367,20 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
         onError={() => setAudioError('Failed to load audio file.')}
       />
 
+      {/* Logo text */}
+      <div className={`absolute top-8 left-8 z-40 text-3xl font-semibold ${ibmPlexMono.className}`}>
+        <span className={`${isLightMode ? 'text-black' : 'text-[#f4f3f2]'} transition-colors duration-500`}>
+          riha.
+        </span>
+      </div>
+
+      {/* Conditional TextGenerateEffect */}
+      {!isLightMode && (
+        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 max-w-[600px] text-center px-4 ${ibmPlexMono.className}`}>
+          <TextGenerateEffect duration={2} filter={false} words={words} />
+        </div>
+      )}
+
       <h1 className="absolute top-5 text-center z-40 text-2xl font-semibold">
         {title}
       </h1>
@@ -501,6 +522,7 @@ const InteractiveRoom = ({ onShowHome }: InteractiveRoomProps) => {
         </button>
       </div>
     </div>
+    
   );
 };
 
