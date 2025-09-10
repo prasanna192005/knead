@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import ReactLenis from "lenis/react";
 import React, { useRef } from "react";
 
@@ -10,7 +10,7 @@ type CharacterProps = {
   char: string;
   index: number;
   centerIndex: number;
-  scrollYProgress: any;
+  scrollYProgress: MotionValue<number>;
 };
 
 const CharacterV1 = ({
@@ -164,25 +164,20 @@ const Skiper31 = () => {
           </span>
         </div>
         <div
-          ref={targetRef}
-          className="relative box-border flex h-[210vh] items-center justify-center gap-[2vw] overflow-hidden bg-[#f5f4f3] p-[2vw]"
+          className="font-geist w-full max-w-4xl text-center text-6xl font-bold uppercase tracking-tighter text-black"
+          style={{
+            perspective: "500px",
+          }}
         >
-          <div
-            className="font-geist w-full max-w-4xl text-center text-6xl font-bold uppercase tracking-tighter text-black"
-            style={{
-              perspective: "500px",
-            }}
-          >
-            {characters.map((char, index) => (
-              <CharacterV1
-                key={index}
-                char={char}
-                index={index}
-                centerIndex={centerIndex}
-                scrollYProgress={scrollYProgress}
-              />
-            ))}
-          </div>
+          {characters.map((char, index) => (
+            <CharacterV1
+              key={index}
+              char={char}
+              index={index}
+              centerIndex={centerIndex}
+              scrollYProgress={scrollYProgress}
+            />
+          ))}
         </div>
         <div
           ref={targetRef2}
